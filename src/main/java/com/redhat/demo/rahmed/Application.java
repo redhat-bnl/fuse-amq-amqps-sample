@@ -21,7 +21,6 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportResource;
 
 /**
  * The Spring-boot main class.
@@ -38,7 +37,8 @@ public class Application {
         String remoteURI = String.format("amqps://%s:%s?%s", config.getServiceName(), config.getServicePort(), config.getParameters());
 
         JmsConnectionFactory qpid = new JmsConnectionFactory(config.getUsername(), config.getPassword(), remoteURI);
-
+        qpid.setTopicPrefix("topic://");
+        
         PooledConnectionFactory factory = new PooledConnectionFactory();
         factory.setConnectionFactory(qpid);
 

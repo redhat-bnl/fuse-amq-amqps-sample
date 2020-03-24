@@ -12,17 +12,18 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-@ConfigurationProperties(prefix = "topic")
+@ConfigurationProperties(prefix = "address")
 public class ConsumerTopic extends RouteBuilder {
-	private String name;
+	private String topicName;
 	private String subcsribtionName;
+	private String queueName;
 
-	public String getName() {
-		return name;
+	public String getTopicName() {
+		return topicName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTopicName(String topicName) {
+		this.topicName = topicName;
 	}
 
 	public String getSubcsribtionName() {
@@ -32,17 +33,18 @@ public class ConsumerTopic extends RouteBuilder {
 	public void setSubcsribtionName(String subcsribtionName) {
 		this.subcsribtionName = subcsribtionName;
 	}
+
+	public String getQueueName() {
+		return queueName;
+	}
+
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
+	}
+
 	public Map<String, Object> processDummyJMSMessage() {
 
 		Map<String, Object> map = new HashMap<String, Object>();
-
-		//Object body = (Object) exchange.getIn().getBody();
-
-		// map.put("ERROR_ID",111);
-		// map.put("ERROR_CODE",headers.get("ERROR-CODE"));
-		// map.put("ERROR_MESSAGE",headers.get("ERROR-MESSAGE"));
-		// map.put("MESSAGE", body.toString());
-		// map.put("STATUS", "ERROR");
 		map.put("ID", "1");
 		map.put("MESSAGE_ATTRIBUTE_1", "asdsad");
 		map.put("MESSAGE_ATTRIBUTE_2", "asdasddsasad");
@@ -51,18 +53,21 @@ public class ConsumerTopic extends RouteBuilder {
 	
 	@Override
 	public void configure() {
-		from("timer:demo?period=3000").routeId("route-amqp-timer").tracing()
+		from("timer:demo?period=3000").routeId("route-timer-producer").streamCaching().tracing()
 			//I need to create a JMS
 	 		//.bean(ConsumerTopic.class, "processDummyJMSMessage()")
 		     .setBody (simple ("Hello World !!"))
 	 		//.setExchangePattern(ExchangePattern.InOnly)
-	 		.log("target Topic is amqp:topic:"+getName())
-	 		.to("amqp:topic:"+getName())		
-	 		.transform(constant("OK Message Sent"))
+	 		.log("Sending Message ${body} to Queue amqp:queue:"+getQueueName())
+	 		.to("amqp:queue:"+getQueueName())
+		    //.log("Sending Message ${body} to Topic amqp:topic:"+getTopicName())
+		 	//.to("amqp:topic:"+getTopicName())
          .end();
 
 		
-		
+		from("amqp:queue:"+getQueueName()).routeId("route-from-incoming-amqp").streamCaching().tracing()
+ 			.log("Recieved Message ${body} from Queue amqp:queue:"+getQueueName())
+ 		.end();
 
 	}
 }
