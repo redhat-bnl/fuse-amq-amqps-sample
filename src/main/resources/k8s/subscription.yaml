@@ -1,0 +1,12 @@
+kind: Address
+apiVersion: enmasse.io/v1beta1
+metadata:
+  labels:
+    addressType: subscription
+  name: demo-space.mysub
+spec:
+  address: mysub
+  type: subscription
+  plan: standard-small-subscription
+  topic: mytopic
+  forwarders: []

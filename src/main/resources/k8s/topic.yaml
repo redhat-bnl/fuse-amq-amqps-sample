@@ -1,0 +1,11 @@
+kind: Address
+apiVersion: enmasse.io/v1beta1
+metadata:
+  labels:
+    addressType: topic
+  name: demo-space.mytopic
+spec:
+  address: mytopic
+  type: topic
+  plan: standard-small-topic
+  forwarders: []

@@ -1,12 +1,23 @@
 apiVersion: user.enmasse.io/v1beta1
 kind: MessagingUser
 metadata:
-  name: spring-boot-camel-amq.client
+  name: demo-space.demo-user
 spec:
-  username: admin
+  username: demo-user
   authentication:
     type: password
-    password: dGVzdA==
+    password: cGFzc3dvcmQ= # Base64 encode of 'password'
   authorization:
-    - operations: ["send", "recv"]
-      addresses: ["incomingOrders"]
+    - addresses:
+        - '*'
+        - mysub
+        - mysubscription
+      operations:
+        - recv
+        - send
+    - addresses: []
+      operations:
+        - manage
+    - addresses: []
+      operations:
+        - view

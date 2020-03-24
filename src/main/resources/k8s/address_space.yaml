@@ -1,11 +1,17 @@
-
 apiVersion: enmasse.io/v1beta1
 kind: AddressSpace
 metadata:
-  name: spring-boot-camel-amq
+  labels:
+    addressSpaceType: standard
+    namespace: amq-online
+    type: address-space
+  name: demo-space
+  namespace: amqp-demo
 spec:
-  type: brokered
-  plan: brokered-single-broker
+  type: standard
+  plan: standard-small
+  authenticationService:
+    name: standard-authservice
   endpoints:
   - name: messaging
     service: messaging
